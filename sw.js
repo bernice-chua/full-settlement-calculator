@@ -1,11 +1,12 @@
-const CACHE='full-settlement-v16';
+const CACHE='full-settlement-v18';
 const ASSETS=[
   './',
   './index.html',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
-  './full-settlement-logo.png'
+  './full-settlement-logo.png',
+  './share-logo.png'
 ];
 
 self.addEventListener('install',event=>{
