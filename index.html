@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#111827" />
-  <meta name="description" content="Estimate car loan full settlement using Rule of 78." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f6f8">
 
-  <title>Full Settlement Calculator</title>
+  <title>Full Settlement</title>
 
   <style>
     :root {
@@ -49,22 +48,54 @@
       padding: 18px 14px 36px;
     }
 
-    .header {
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
       margin-bottom: 16px;
     }
 
     .title {
-      font-size: 24px;
-      line-height: 1.2;
-      font-weight: 750;
       margin: 0;
+      font-size: 26px;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
 
-    .subtitle {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 5px;
-      line-height: 1.4;
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      background: transparent;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .icon-btn:active {
+      background: var(--soft);
+    }
+
+    .icon-btn svg {
+      width: 21px;
+      height: 21px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .card {
@@ -77,14 +108,14 @@
 
     .section-title {
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 750;
       margin: 0 0 12px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 14px;
     }
 
     label {
@@ -95,27 +126,8 @@
     .label {
       display: block;
       font-size: 13px;
-      font-weight: 650;
-      margin: 0 0 6px;
-    }
-
-    .field {
-      min-height: 50px;
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: #fff;
-      padding: 0 13px;
-      color: var(--text);
-      outline: none;
-      font-size: 16px;
-    }
-
-    .field:focus,
-    .money-wrap:focus-within,
-    .suffix-wrap:focus-within {
-      border-color: #9ca3af;
-      box-shadow: 0 0 0 3px #f0f1f3;
+      font-weight: 700;
+      margin-bottom: 6px;
     }
 
     .money-wrap,
@@ -127,6 +139,13 @@
       display: flex;
       align-items: center;
       padding: 0 13px;
+    }
+
+    .money-wrap:focus-within,
+    .suffix-wrap:focus-within,
+    .field:focus {
+      border-color: #9ca3af;
+      box-shadow: 0 0 0 3px #f0f1f3;
     }
 
     .money-symbol,
@@ -145,13 +164,26 @@
     }
 
     .bare-input {
+      width: 100%;
+      min-width: 0;
+      padding: 12px 0;
       border: 0;
       outline: 0;
-      min-width: 0;
-      width: 100%;
-      font-size: 16px;
       background: transparent;
-      padding: 12px 0;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .field {
+      width: 100%;
+      min-height: 50px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      padding: 0 12px;
+      outline: none;
+      color: var(--text);
+      font-size: 16px;
     }
 
     .seg {
@@ -161,21 +193,22 @@
     }
 
     .seg label {
-      min-height: 48px;
+      min-height: 50px;
       border: 1px solid var(--line);
       border-radius: 13px;
-      padding: 9px 11px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      cursor: pointer;
+      gap: 9px;
+      padding: 9px 11px;
       background: #fff;
+      cursor: pointer;
     }
 
     .seg input {
-      width: 17px;
-      height: 17px;
+      width: 18px;
+      height: 18px;
       margin: 0;
+      flex: 0 0 auto;
     }
 
     .seg-text {
@@ -194,9 +227,9 @@
     }
 
     .date-caption {
+      margin: 0 0 4px 2px;
       font-size: 11px;
       color: var(--muted);
-      margin: 0 0 4px 2px;
     }
 
     .fee-row {
@@ -210,7 +243,7 @@
       border: 1px solid var(--line);
       background: #fff;
       border-radius: 13px;
-      font-weight: 700;
+      font-weight: 750;
       cursor: pointer;
     }
 
@@ -226,30 +259,29 @@
     }
 
     .admin-base label {
-      min-height: 44px;
+      min-height: 46px;
       border: 1px solid var(--line);
       border-radius: 12px;
-      padding: 8px 10px;
       display: flex;
       align-items: center;
       gap: 7px;
+      padding: 8px 10px;
       background: #fff;
-      min-width: 0;
+      overflow: hidden;
     }
 
     .admin-base input {
+      width: 17px;
+      height: 17px;
       margin: 0;
-      width: 16px;
-      height: 16px;
       flex: 0 0 auto;
     }
 
     .admin-base span {
+      min-width: 0;
       font-size: 11px;
       line-height: 1.15;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .date-card {
@@ -262,7 +294,7 @@
     .date-card-title {
       font-size: 13px;
       font-weight: 750;
-      margin: 0 0 10px;
+      margin-bottom: 10px;
     }
 
     .result-card {
@@ -275,30 +307,30 @@
     .result-head {
       display: flex;
       justify-content: space-between;
-      gap: 10px;
       align-items: flex-start;
+      gap: 10px;
       margin-bottom: 12px;
     }
 
     .eyebrow {
+      color: var(--muted);
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      color: var(--muted);
     }
 
     .result-date {
+      margin-top: 2px;
       font-size: 14px;
       font-weight: 750;
-      margin-top: 2px;
     }
 
     .badge {
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
       font-size: 11px;
       font-weight: 700;
-      background: var(--accent-soft);
-      border-radius: 999px;
-      padding: 5px 8px;
       white-space: nowrap;
     }
 
@@ -329,219 +361,32 @@
     }
 
     .total-label {
+      color: var(--muted);
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.07em;
-      color: var(--muted);
     }
 
     .total-value {
+      margin-top: 3px;
       font-size: 24px;
       font-weight: 800;
-      margin-top: 3px;
     }
 
     .note {
+      padding: 11px 12px;
+      border-radius: 13px;
+      background: var(--soft);
+      color: var(--muted);
       font-size: 11px;
       line-height: 1.45;
-      color: var(--muted);
-      background: var(--soft);
-      border-radius: 13px;
-      padding: 11px 12px;
     }
 
     .error {
-      font-size: 12px;
-      color: var(--danger);
-      border: 1px solid #fecdca;
-      background: #fffbfa;
-      border-radius: 12px;
-      padding: 10px 11px;
-      margin-bottom: 14px;
       display: none;
-    }
-
-    .actions {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-    }
-
-    .btn {
-      min-height: 44px;
-      border: 1px solid var(--line);
-      background: #fff;
-      border-radius: 12px;
-      padding: 0 15px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    @media (min-width: 700px) {
-      .page {
-        padding: 26px 20px 48px;
-      }
-
-      .title {
-        font-size: 28px;
-      }
-
-      .desktop-two {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .card {
-        padding: 18px;
-      }
-
-      .admin-base span {
-        font-size: 12px;
-      }
-    }
-
-    @media (max-width: 390px) {
-      .page {
-        padding-left: 10px;
-        padding-right: 10px;
-      }
-
-      .card {
-        padding: 13px;
-      }
-
-      .date-grid {
-        gap: 6px;
-      }
-
-      .date-grid .field {
-        padding: 0 8px;
-      }
-
-      .admin-base {
-        gap: 6px;
-      }
-
-      .admin-base label {
-        padding: 8px;
-      }
-
-      .admin-base span {
-        font-size: 10.5px;
-      }
-    }
-  </style>
-</head>
-
-<body>
-
-<main class="page">
-
-  <header class="header">
-    <h1 class="title">Full Settlement Calculator</h1>
-    <div class="subtitle">
-      Estimate the full settlement amount of a flat-rate car loan using Rule of 78.
-    </div>
-  </header>
-
-  <section class="card">
-
-    <h2 class="section-title">Loan details</h2>
-
-    <div class="grid desktop-two">
-
-      <label>
-        <span class="label">Original loan amount</span>
-
-        <div class="money-wrap">
-          <span class="money-symbol">$</span>
-
-          <input
-            id="loanAmount"
-            class="bare-input"
-            inputmode="numeric"
-            autocomplete="off"
-            placeholder="Enter loan amount"
-          />
-        </div>
-      </label>
-
-      <label>
-        <span class="label">Interest rate</span>
-
-        <div class="suffix-wrap">
-          <input
-            id="interestRate"
-            class="bare-input"
-            inputmode="decimal"
-            type="number"
-            min="0"
-            step="0.01"
-            placeholder="e.g. 2.78"
-          />
-
-          <span class="suffix">% p.a.</span>
-        </div>
-      </label>
-
-      <label>
-        <span class="label">Original tenure</span>
-
-        <div class="suffix-wrap">
-          <input
-            id="tenureMonths"
-            class="bare-input"
-            inputmode="numeric"
-            type="number"
-            min="1"
-            max="240"
-            step="1"
-            placeholder="e.g. 84"
-          />
-
-          <span class="suffix">months</span>
-        </div>
-      </label>
-
-    </div>
-
-    <div style="height:14px"></div>
-
-    <div class="label">Instalment payment timing</div>
-
-    <div class="seg">
-
-      <label>
-        <input
-          type="radio"
-          name="paymentTiming"
-          value="arrears"
-          checked
-        />
-
-        <span class="seg-text">
-          <strong>In arrears</strong><br>
-          <span style="color:var(--muted)">Default</span>
-        </span>
-      </label>
-
-      <label>
-        <input
-          type="radio"
-          name="paymentTiming"
-          value="advance"
-        />
-
-        <span class="seg-text">
-          <strong>In advance</strong><br>
-          <span style="color:var(--muted)">1st payment at start</span>
-        </span>
-      </label>
-
-    </div>
+      margin-bottom: 14px;
+      padding: 10px 11px;
+      border:
 
     <div style="height:14px"></div>
 
