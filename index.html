@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="Estimate car loan full settlement using Rule of 78." />
+
+  <title>Full Settlement Calculator</title>
+
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --soft: #f3f4f6;
+      --accent: #111827;
+      --accent-soft: #eef0f3;
+      --danger: #b42318;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 18px 14px 36px;
+    }
+
+    .header {
+      margin-bottom: 16px;
+    }
+
+    .title {
+      font-size: 24px;
+      line-height: 1.2;
+      font-weight: 750;
+      margin: 0;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 5px;
+      line-height: 1.4;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0 0 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      min-width: 0;
+    }
+
+    .label {
+      display: block;
+      font-size: 13px;
+      font-weight: 650;
+      margin: 0 0 6px;
+    }
+
+    .field {
+      min-height: 50px;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      padding: 0 13px;
+      color: var(--text);
+      outline: none;
+      font-size: 16px;
+    }
+
+    .field:focus,
+    .money-wrap:focus-within,
+    .suffix-wrap:focus-within {
+      border-color: #9ca3af;
+      box-shadow: 0 0 0 3px #f0f1f3;
+    }
+
+    .money-wrap,
+    .suffix-wrap {
+      min-height: 50px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 13px;
+    }
+
+    .money-symbol,
+    .suffix {
+      color: var(--muted);
+      flex: 0 0 auto;
+    }
+
+    .money-symbol {
+      margin-right: 8px;
+    }
+
+    .suffix {
+      margin-left: 8px;
+      font-size: 13px;
+    }
+
+    .bare-input {
+      border: 0;
+      outline: 0;
+      min-width: 0;
+      width: 100%;
+      font-size: 16px;
+      background: transparent;
+      padding: 12px 0;
+    }
+
+    .seg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .seg label {
+      min-height: 48px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 9px 11px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .seg input {
+      width: 17px;
+      height: 17px;
+      margin: 0;
+    }
+
+    .seg-text {
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    .seg-text strong {
+      font-size: 13px;
+    }
+
+    .date-grid {
+      display: grid;
+      grid-template-columns: 0.75fr 1.15fr 0.9fr;
+      gap: 8px;
+    }
+
+    .date-caption {
+      font-size: 11px;
+      color: var(--muted);
+      margin: 0 0 4px 2px;
+    }
+
+    .fee-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .fee-btn {
+      min-height: 46px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .fee-btn.active {
+      border-color: #6b7280;
+      background: var(--accent-soft);
+    }
+
+    .admin-base {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .admin-base label {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: #fff;
+      min-width: 0;
+    }
+
+    .admin-base input {
+      margin: 0;
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+    }
+
+    .admin-base span {
+      font-size: 11px;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .date-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 13px;
+      background: #fff;
+    }
+
+    .date-card-title {
+      font-size: 13px;
+      font-weight: 750;
+      margin: 0 0 10px;
+    }
+
+    .result-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 15px;
+      background: #fff;
+    }
+
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .eyebrow {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+    }
+
+    .result-date {
+      font-size: 14px;
+      font-weight: 750;
+      margin-top: 2px;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--accent-soft);
+      border-radius: 999px;
+      padding: 5px 8px;
+      white-space: nowrap;
+    }
+
+    .rows {
+      display: grid;
+      gap: 9px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .row span:first-child {
+      color: var(--muted);
+    }
+
+    .row strong {
+      text-align: right;
+    }
+
+    .total {
+      margin-top: 13px;
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+    }
+
+    .total-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--muted);
+    }
+
+    .total-value {
+      font-size: 24px;
+      font-weight: 800;
+      margin-top: 3px;
+    }
+
+    .note {
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--muted);
+      background: var(--soft);
+      border-radius: 13px;
+      padding: 11px 12px;
+    }
+
+    .error {
+      font-size: 12px;
+      color: var(--danger);
+      border: 1px solid #fecdca;
+      background: #fffbfa;
+      border-radius: 12px;
+      padding: 10px 11px;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 12px;
+      padding: 0 15px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (min-width: 700px) {
+      .page {
+        padding: 26px 20px 48px;
+      }
+
+      .title {
+        font-size: 28px;
+      }
+
+      .desktop-two {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .card {
+        padding: 18px;
+      }
+
+      .admin-base span {
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .page {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .card {
+        padding: 13px;
+      }
+
+      .date-grid {
+        gap: 6px;
+      }
+
+      .date-grid .field {
+        padding: 0 8px;
+      }
+
+      .admin-base {
+        gap: 6px;
+      }
+
+      .admin-base label {
+        padding: 8px;
+      }
+
+      .admin-base span {
+        font-size: 10.5px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<main class="page">
+
+  <header class="header">
+    <h1 class="title">Full Settlement Calculator</h1>
+    <div class="subtitle">
+      Estimate the full settlement amount of a flat-rate car loan using Rule of 78.
+    </div>
+  </header>
+
+  <section class="card">
+
+    <h2 class="section-title">Loan details</h2>
+
+    <div class="grid desktop-two">
+
+      <label>
+        <span class="label">Original loan amount</span>
+
+        <div class="money-wrap">
+          <span class="money-symbol">$</span>
+
+          <input
+            id="loanAmount"
+            class="bare-input"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="Enter loan amount"
+          />
+        </div>
+      </label>
+
+      <label>
+        <span class="label">Interest rate</span>
+
+        <div class="suffix-wrap">
+          <input
+            id="interestRate"
+            class="bare-input"
+            inputmode="decimal"
+            type="number"
+            min="0"
+            step="0.01"
+            placeholder="e.g. 2.78"
+          />
+
+          <span class="suffix">% p.a.</span>
+        </div>
+      </label>
+
+      <label>
+        <span class="label">Original tenure</span>
+
+        <div class="suffix-wrap">
+          <input
+            id="tenureMonths"
+            class="bare-input"
+            inputmode="numeric"
+            type="number"
+            min="1"
+            max="240"
+            step="1"
+            placeholder="e.g. 84"
+          />
+
+          <span class="suffix">months</span>
+        </div>
+      </label>
+
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="label">Instalment payment timing</div>
+
+    <div class="seg">
+
+      <label>
+        <input
+          type="radio"
+          name="paymentTiming"
+          value="arrears"
+          checked
+        />
+
+        <span class="seg-text">
+          <strong>In arrears</strong><br>
+          <span style="color:var(--muted)">Default</span>
+        </span>
+      </label>
+
+      <label>
+        <input
+          type="radio"
+          name="paymentTiming"
+          value="advance"
+        />
+
+        <span class="seg-text">
+          <strong>In advance</strong><br>
+          <span style="color:var(--muted)">1st payment at start</span>
+        </span>
+      </label>
+
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="label">Loan start date</div>
+
+    <div class="date-grid">
+
+      <label>
+        <div class="date-caption">Day</div>
+        <select id="startDay" class="field"></select>
+      </label>
+
+      <label>
+        <div class="date-caption">Month</div>
+        <select id="startMonth" class="field"></select>
+      </label>
+
+      <label>
+        <div class="date-caption">Year</div>
+        <select id="startYear" class="field"></select>
+      </label>
+
+    </div>
+
+  </section>
+
+  <section class="card">
+
+    <h2 class="section-title">Fees</h2>
+
+    <div class="label">Admin fee</div>
+
+    <div class="fee-row">
+
+      <button
+        type="button"
+        class="fee-btn active"
+        data-admin="1"
+      >
+        1%
+      </button>
+
+      <button
+        type="button"
+        class="fee-btn"
+        data-admin="1.5"
+      >
+        1.5%
+      </button>
+
+      <button
+        type="button"
+        class="fee-btn"
+        data-admin="other"
+      >
+        Other
+      </button>
+
+    </div>
+
+    <div
+      id="customAdminRow"
+      class="hidden"
+      style="margin-top:8px"
+    >
+
+      <div class="suffix-wrap">
+
+        <input
+          id="customAdminRate"
+          class="bare-input"
+          inputmode="decimal"
+          type="number"
+          min="0"
+          step="0.1"
+          placeholder="Enter admin fee"
+        />
+
+        <span class="suffix">%</span>
+
+      </div>
+
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="label">Admin fee based on</div>
+
+    <div class="admin-base">
+
+      <label>
+
+        <input
+          type="radio"
+          name="adminBase"
+          value="original"
+          checked
+        />
+
+        <span>Original loan amount</span>
+
+      </label>
+
+      <label>
+
+        <input
+          type="radio"
+          name="adminBase"
+          value="outstanding"
+        />
+
+        <span>Outstanding principal</span>
+
+      </label>
+
+    </div>
+
+  </section>
+
+  <section class="card">
+
+    <h2 class="section-title">Compare settlement dates</h2>
+
+    <div class="grid desktop-two">
+
+      <div class="date-card">
+
+        <div class="date-card-title">
+          Settlement date 1
+        </div>
+
+        <div class="date-grid">
+
+          <label>
+            <div class="date-caption">Day</div>
+            <select id="settle1Day" class="field"></select>
+          </label>
+
+          <label>
+            <div class="date-caption">Month</div>
+            <select id="settle1Month" class="field"></select>
+          </label>
+
+          <label>
+            <div class="date-caption">Year</div>
+            <select id="settle1Year" class="field"></select>
+          </label>
+
+        </div>
+
+      </div>
+
+      <div class="date-card">
+
+        <div class="date-card-title">
+          Settlement date 2
+        </div>
+
+        <div class="date-grid">
+
+          <label>
+            <div class="date-caption">Day</div>
+            <select id="settle2Day" class="field"></select>
+          </label>
+
+          <label>
+            <div class="date-caption">Month</div>
+            <select id="settle2Month" class="field"></select>
+          </label>
+
+          <label>
+            <div class="date-caption">Year</div>
+            <select id="settle2Year" class="field"></select>
+          </label>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <div
+    id="errorBox"
+    class="error"
+    role="alert"
+  ></div>
+
+  <section
+    class="grid desktop-two"
+    style="margin-bottom:14px"
+  >
+
+    <article class="result-card">
+
+      <div class="result-head">
+
+        <div>
+
+          <div class="eyebrow">
+            Date 1
+          </div>
+
+          <div
+            id="resultDate1"
+            class="result-date"
+          >
+            Select a settlement day
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="rows">
+
+        <div class="row">
+          <span>Instalments paid</span>
+          <strong id="paid1">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Remaining months</span>
+          <strong id="remaining1">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Outstanding principal</span>
+          <strong id="outstanding1">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Rule 78 rebate</span>
+          <strong id="rebate1">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Early settlement charge (20%)</span>
+          <strong id="charge1">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Admin fee</span>
+          <strong id="admin1">—</strong>
+        </div>
+
+      </div>
+
+      <div class="total">
+
+        <div class="total-label">
+          Estimated full settlement
+        </div>
+
+        <div
+          id="total1"
+          class="total-value"
+        >
+          —
+        </div>
+
+      </div>
+
+    </article>
+
+    <article class="result-card">
+
+      <div class="result-head">
+
+        <div>
+
+          <div class="eyebrow">
+            Date 2
+          </div>
+
+          <div
+            id="resultDate2"
+            class="result-date"
+          >
+            Select a settlement day
+          </div>
+
+        </div>
+
+        <div
+          id="differenceBadge"
+          class="badge hidden"
+        ></div>
+
+      </div>
+
+      <div class="rows">
+
+        <div class="row">
+          <span>Instalments paid</span>
+          <strong id="paid2">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Remaining months</span>
+          <strong id="remaining2">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Outstanding principal</span>
+          <strong id="outstanding2">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Rule 78 rebate</span>
+          <strong id="rebate2">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Early settlement charge (20%)</span>
+          <strong id="charge2">—</strong>
+        </div>
+
+        <div class="row">
+          <span>Admin fee</span>
+          <strong id="admin2">—</strong>
+        </div>
+
+      </div>
+
+      <div class="total">
+
+        <div class="total-label">
+          Estimated full settlement
+        </div>
+
+        <div
+          id="total2"
+          class="total-value"
+        >
+          —
+        </div>
+
+      </div>
+
+    </article>
+
+  </section>
+
+  <section class="card">
+
+    <div class="actions">
+
+      <button
+        id="clearBtn"
+        class="btn"
+        type="button"
+      >
+        Clear
+      </button>
+
+    </div>
+
+  </section>
+
+  <div class="note">
+    Estimate only. Actual redemption figures may differ due to bank repayment cut-off dates, settlement notice periods, instalment timing, rounding and contractual charges.
+  </div>
+
+</main>
+
+<script>
+
+(() => {
+
+  const $ = (id) =>
+    document.getElementById(id);
+
+  const now =
+    new Date();
+
+  const CURRENT_MONTH =
+    now.getMonth() + 1;
+
+  const CURRENT_YEAR =
+    now.getFullYear();
+
+  const MONTHS = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ];
+
+  const EARLY_SETTLEMENT_CHARGE_RATE =
+    0.20;
+
+  let adminChoice =
+    1;
+
+
+  function fillDays(id) {
+
+    const el =
+      $(id);
+
+    el.innerHTML =
+      '<option value="">Day</option>';
+
+    for (
+      let d = 1;
+      d <= 31;
+      d++
+    ) {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        String(d);
+
+      option.textContent =
+        String(d);
+
+      el.appendChild(option);
+
+    }
+
+  }
+
+
+  function fillMonths(
+    id,
+    selected = null
+  ) {
+
+    const el =
+      $(id);
+
+    el.innerHTML =
+      '<option value="">Month</option>';
+
+    MONTHS.forEach(
+      (name, index) => {
+
+        const option =
+          document.createElement("option");
+
+        option.value =
+          String(index + 1);
+
+        option.textContent =
+          name;
+
+        if (
+          selected === index + 1
+        ) {
+          option.selected = true;
+        }
+
+        el.appendChild(option);
+
+      }
+    );
+
+  }
+
+
+  function fillStartYears() {
+
+    const el =
+      $("startYear");
+
+    el.innerHTML =
+      '<option value="">Year</option>';
+
+
+    for (
+      let y = CURRENT_YEAR;
+      y >= CURRENT_YEAR - 9;
+      y--
+    ) {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        String(y);
+
+      option.textContent =
+        String(y);
+
+      el.appendChild(option);
+
+    }
+
+
+    const divider =
+      document.createElement("option");
+
+    divider.disabled =
+      true;
+
+    divider.textContent =
+      "────────";
+
+    el.appendChild(divider);
+
+
+    for (
+      let y = CURRENT_YEAR - 10;
+      y >= 2000;
+      y--
+    ) {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        String(y);
+
+      option.textContent =
+        String(y);
+
+      el.appendChild(option);
+
+    }
+
+  }
+
+
+  function fillSettlementYears(id) {
+
+    const el =
+      $(id);
+
+    el.innerHTML =
+      '<option value="">Year</option>';
+
+    for (
+      let y = CURRENT_YEAR - 2;
+      y <= CURRENT_YEAR + 10;
+      y++
+    ) {
+
+      const option =
+        document.createElement("option");
+
+      option.value =
+        String(y);
+
+      option.textContent =
+        String(y);
+
+      if (
+        y === CURRENT_YEAR
+      ) {
+        option.selected = true;
+      }
+
+      el.appendChild(option);
+
+    }
+
+  }
+
+
+  [
+    "startDay",
+    "settle1Day",
+    "settle2Day"
+  ].forEach(fillDays);
+
+
+  fillMonths(
+    "startMonth"
+  );
+
+  fillStartYears();
+
+
+  [
+    "settle1Month",
+    "settle2Month"
+  ].forEach(
+    id =>
+      fillMonths(
+        id,
+        CURRENT_MONTH
+      )
+  );
+
+
+  [
+    "settle1Year",
+    "settle2Year"
+  ].forEach(
+    fillSettlementYears
+  );
+
+
+  function cleanLoanAmount(value) {
+
+    const cleaned =
+      String(
+        value || ""
+      ).replace(
+        /[^\d]/g,
+        ""
+      );
+
+    return cleaned
+      ? Number(cleaned)
+  
