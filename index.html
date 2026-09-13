@@ -1,1007 +1,1025 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#f5f6f8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f6f8">
+<title>Full Settlement</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-  <title>Full Settlement</title>
+<style>
+:root{
+  --bg:#f5f6f8;
+  --card:#ffffff;
+  --text:#111827;
+  --muted:#6b7280;
+  --line:#e5e7eb;
+  --soft:#f3f4f6;
+  --accent:#111827;
+  --accent-soft:#eef0f3;
+  --danger:#b42318;
+}
+*{box-sizing:border-box}
+html{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+body{margin:0;background:var(--bg)}
+button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
+.page{max-width:900px;margin:0 auto;padding:10px 10px 14px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:7px}
+.title{margin:0;font-size:25px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+.top-actions{display:flex;gap:18px;align-items:center}
+.text-btn{
+  border:0;background:transparent;color:var(--text);font-size:13px;font-weight:700;
+  padding:8px 4px;min-height:38px;cursor:pointer
+}
+.text-btn:active{opacity:.55}
+.text-btn:disabled{color:#aeb4bd;opacity:.7;cursor:default;pointer-events:none}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:10px;margin-bottom:7px
+}
+.grid{display:grid;gap:8px}.loan-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}.monthly-box{min-width:130px;text-align:right}.monthly-label{font-size:13px;color:var(--muted);margin-bottom:6px}.monthly-value{min-height:44px;display:flex;align-items:center;justify-content:flex-end;font-size:17px;font-weight:800;padding:0 2px}
+.twocol-mobile{grid-template-columns:1fr 1fr}
+.label{display:block;font-size:14px;font-weight:700;margin-bottom:4px}
+.wrap{
+  min-height:44px;border:1px solid var(--line);border-radius:12px;background:#fff;
+  display:flex;align-items:center;padding:0 13px
+}
+.wrap:focus-within,.field:focus{
+  border-color:#9ca3af;box-shadow:0 0 0 3px #f0f1f3
+}
+.prefix,.suffix{color:var(--muted);flex:0 0 auto}
+.prefix{margin-right:8px}.suffix{margin-left:8px;font-size:12px}
+.bare{width:100%;min-width:0;border:0;outline:0;background:transparent;font-size:16px;padding:9px 0}
+.segment,.adminbase{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.segment label,.adminbase label{
+  min-height:48px;border:1px solid var(--line);border-radius:13px;background:#fff;
+  display:flex;align-items:center;gap:8px;padding:8px 10px
+}
+.segment input,.adminbase input{width:18px;height:18px;margin:0;flex:0 0 auto}
+.small{font-size:12px;line-height:1.15}
+.label-row{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}
+.triangle-btn{
+  width:34px;height:34px;border:0;background:transparent;border-radius:10px;
+  display:grid;place-items:center;cursor:pointer;color:var(--muted);padding:0;flex:0 0 auto
+}
+.triangle-btn:active{background:var(--soft)}
+.triangle-btn::before{content:"▼";font-size:12px;line-height:1}
+.triangle-btn.open::before{content:"▲"}
+.advanced-panel{
+  display:none;
+  margin-top:12px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--soft);
+}
+.advanced-panel.open{display:block}
+.advanced-group+.advanced-group{margin-top:14px}
+.dategrid{display:grid;grid-template-columns:.72fr 1.12fr .9fr;gap:7px}
+.caption{font-size:11px;color:var(--muted);margin:0 0 3px 2px}
+.field{
+  width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;
+  background:#fff;padding:0 10px;outline:none;font-size:16px;color:var(--text)
+}
+.sectiontitle{font-size:15px;font-weight:750;margin:0 0 12px}
+.feerow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.feebtn{
+  min-height:46px;border:1px solid var(--line);background:#fff;border-radius:13px;
+  font-weight:750;cursor:pointer;padding:0 8px
+}
+.feebtn.active{border-color:#6b7280;background:var(--accent-soft)}
+.feebtn input{
+  width:100%;border:0;outline:0;background:transparent;text-align:center;
+  font-weight:750;font-size:16px;padding:0
+}
+.adminbase label{overflow:hidden}
+.adminbase span{font-size:11px;line-height:1.12;white-space:nowrap}
+.datecard{border:1px solid var(--line);border-radius:14px;padding:9px;background:#fff}.settlement-card{padding:10px}.settlement-line{display:grid;gap:5px}.settlement-divider{height:1px;background:var(--line);margin:8px 0}
+.date2-details summary{list-style:none;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.date2-details summary::-webkit-details-marker{display:none}
+.date2-details summary::after{content:'▼';font-size:11px;color:var(--muted)}
+.date2-details[open] summary::after{content:'▲'}
+.date2-body{margin-top:6px}
+.datecardtitle{font-size:14px;font-weight:750;margin-bottom:6px}.optional-label{font-size:10px;font-weight:500;color:var(--muted);margin-left:4px}
+.result{
+  background:#fff;border:1px solid var(--line);border-radius:15px;padding:10px
+}
+.resultdate{font-size:17px;font-weight:800;line-height:1.12}
+.difference{
+  margin-top:7px;
+  padding:8px 10px;
+  background:#eef0f3;
+  border-radius:13px;
+  text-align:center;
+  font-size:21px;
+  line-height:1.1;
+  font-weight:850;
+}
+.rows{display:grid;gap:4px}
+.result-details{margin:0}
+.result-details summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:6px;cursor:pointer;padding:0}
+.result-details summary::-webkit-details-marker{display:none}
+.result-details summary::after{content:'▼';font-size:11px;color:var(--muted);flex:0 0 auto}
+.result-details[open] summary::after{content:'▲'}
+.result-details .rows{margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.result-toggle .resultdate{min-width:0}
+.row{display:flex;justify-content:space-between;gap:12px;font-size:13px}
+.row span{color:var(--muted)}
+.row strong{text-align:right}
+.total{margin-top:7px;padding-top:7px;border-top:1px solid var(--line)}
+.totallabel{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.totalvalue{font-size:22px;font-weight:800;margin-top:2px}
+.compare-highlight{
+  margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);
+  text-align:right
+}
+.compare-highlight .label2{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.compare-highlight .value2{font-size:28px;font-weight:850;line-height:1.05;margin-top:3px}
+.footer{text-align:center;color:var(--muted);font-size:10px;padding:8px 8px 2px}.error{
+  display:none;color:var(--danger);background:#fffbfa;border:1px solid #fecdca;
+  border-radius:12px;padding:10px 11px;margin-bottom:12px;font-size:12px
+}
+.hidden{display:none!important}
 
-  <style>
-    :root {
-      --bg: #f5f6f8;
-      --card: #ffffff;
-      --text: #111827;
-      --muted: #6b7280;
-      --line: #e5e7eb;
-      --soft: #f3f4f6;
-      --accent: #111827;
-      --accent-soft: #eef0f3;
-      --danger: #b42318;
-    }
+.result-grid{grid-template-columns:1fr 1fr;gap:7px}.result-grid.single #resultCard1{grid-column:1/-1}
+@media(min-width:700px){
+  .page{padding:24px 18px 44px}
+  .desktop-two{grid-template-columns:1fr 1fr}
+  .card,.result{padding:18px}
+  .title{font-size:30px}
+  .adminbase span{font-size:12px}
+}
+@media(max-width:390px){
+  .page{padding-left:10px;padding-right:10px}
+  .card{padding:12px}
+  .dategrid{gap:6px}
+  .field{padding:0 8px}
+  .adminbase{gap:6px}
+  .adminbase label{padding:8px}
+  .adminbase span{font-size:10px}
+}
+</style>
+</head>
 
-    * {
-      box-sizing: border-box;
-    }
+<body>
+<main class="page">
 
-    html {
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-
-    body {
-      margin: 0;
-      background: var(--bg);
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .page {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 18px 14px 36px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .title {
-      margin: 0;
-      font-size: 26px;
-      line-height: 1.15;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-    }
-
-    .top-actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
-    .icon-btn {
-      width: 44px;
-      height: 44px;
-      border: 0;
-      background: transparent;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      color: var(--text);
-      cursor: pointer;
-      padding: 0;
-    }
-
-    .icon-btn:active {
-      background: var(--soft);
-    }
-
-    .icon-btn svg {
-      width: 21px;
-      height: 21px;
-      stroke: currentColor;
-      fill: none;
-      stroke-width: 1.9;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 14px;
-    }
-
-    .section-title {
-      font-size: 15px;
-      font-weight: 750;
-      margin: 0 0 12px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 14px;
-    }
-
-    label {
-      display: block;
-      min-width: 0;
-    }
-
-    .label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 6px;
-    }
-
-    .money-wrap,
-    .suffix-wrap {
-      min-height: 50px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      padding: 0 13px;
-    }
-
-    .money-wrap:focus-within,
-    .suffix-wrap:focus-within,
-    .field:focus {
-      border-color: #9ca3af;
-      box-shadow: 0 0 0 3px #f0f1f3;
-    }
-
-    .money-symbol,
-    .suffix {
-      color: var(--muted);
-      flex: 0 0 auto;
-    }
-
-    .money-symbol {
-      margin-right: 8px;
-    }
-
-    .suffix {
-      margin-left: 8px;
-      font-size: 13px;
-    }
-
-    .bare-input {
-      width: 100%;
-      min-width: 0;
-      padding: 12px 0;
-      border: 0;
-      outline: 0;
-      background: transparent;
-      font-size: 16px;
-      color: var(--text);
-    }
-
-    .field {
-      width: 100%;
-      min-height: 50px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      background: #fff;
-      padding: 0 12px;
-      outline: none;
-      color: var(--text);
-      font-size: 16px;
-    }
-
-    .seg {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .seg label {
-      min-height: 50px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      padding: 9px 11px;
-      background: #fff;
-      cursor: pointer;
-    }
-
-    .seg input {
-      width: 18px;
-      height: 18px;
-      margin: 0;
-      flex: 0 0 auto;
-    }
-
-    .seg-text {
-      font-size: 12px;
-      line-height: 1.2;
-    }
-
-    .seg-text strong {
-      font-size: 13px;
-    }
-
-    .date-grid {
-      display: grid;
-      grid-template-columns: 0.75fr 1.15fr 0.9fr;
-      gap: 8px;
-    }
-
-    .date-caption {
-      margin: 0 0 4px 2px;
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .fee-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-
-    .fee-btn {
-      min-height: 46px;
-      border: 1px solid var(--line);
-      background: #fff;
-      border-radius: 13px;
-      font-weight: 750;
-      cursor: pointer;
-    }
-
-    .fee-btn.active {
-      border-color: #6b7280;
-      background: var(--accent-soft);
-    }
-
-    .admin-base {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .admin-base label {
-      min-height: 46px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 8px 10px;
-      background: #fff;
-      overflow: hidden;
-    }
-
-    .admin-base input {
-      width: 17px;
-      height: 17px;
-      margin: 0;
-      flex: 0 0 auto;
-    }
-
-    .admin-base span {
-      min-width: 0;
-      font-size: 11px;
-      line-height: 1.15;
-      white-space: nowrap;
-    }
-
-    .date-card {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 13px;
-      background: #fff;
-    }
-
-    .date-card-title {
-      font-size: 13px;
-      font-weight: 750;
-      margin-bottom: 10px;
-    }
-
-    .result-card {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 15px;
-      background: #fff;
-    }
-
-    .result-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .eyebrow {
-      color: var(--muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-
-    .result-date {
-      margin-top: 2px;
-      font-size: 14px;
-      font-weight: 750;
-    }
-
-    .badge {
-      padding: 5px 8px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .rows {
-      display: grid;
-      gap: 9px;
-    }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      font-size: 13px;
-    }
-
-    .row span:first-child {
-      color: var(--muted);
-    }
-
-    .row strong {
-      text-align: right;
-    }
-
-    .total {
-      margin-top: 13px;
-      padding-top: 13px;
-      border-top: 1px solid var(--line);
-    }
-
-    .total-label {
-      color: var(--muted);
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-    }
-
-    .total-value {
-      margin-top: 3px;
-      font-size: 24px;
-      font-weight: 800;
-    }
-
-    .note {
-      padding: 11px 12px;
-      border-radius: 13px;
-      background: var(--soft);
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.45;
-    }
-
-    .error {
-      display: none;
-      margin-bottom: 14px;
-      padding: 10px 11px;
-      border:
-
-    <div style="height:14px"></div>
-
-    <div class="label">Loan start date</div>
-
-    <div class="date-grid">
-
-      <label>
-        <div class="date-caption">Day</div>
-        <select id="startDay" class="field"></select>
-      </label>
-
-      <label>
-        <div class="date-caption">Month</div>
-        <select id="startMonth" class="field"></select>
-      </label>
-
-      <label>
-        <div class="date-caption">Year</div>
-        <select id="startYear" class="field"></select>
-      </label>
-
+  <div class="topbar">
+    <h1 class="title">Full Settlement</h1>
+    <div class="top-actions">
+      <button id="shareBtn" class="text-btn" type="button" disabled>Share</button>
+      <button id="clearBtn" class="text-btn" type="button" disabled>Clear</button>
     </div>
-
-  </section>
-
-  <section class="card">
-
-    <h2 class="section-title">Fees</h2>
-
-    <div class="label">Admin fee</div>
-
-    <div class="fee-row">
-
-      <button
-        type="button"
-        class="fee-btn active"
-        data-admin="1"
-      >
-        1%
-      </button>
-
-      <button
-        type="button"
-        class="fee-btn"
-        data-admin="1.5"
-      >
-        1.5%
-      </button>
-
-      <button
-        type="button"
-        class="fee-btn"
-        data-admin="other"
-      >
-        Other
-      </button>
-
-    </div>
-
-    <div
-      id="customAdminRow"
-      class="hidden"
-      style="margin-top:8px"
-    >
-
-      <div class="suffix-wrap">
-
-        <input
-          id="customAdminRate"
-          class="bare-input"
-          inputmode="decimal"
-          type="number"
-          min="0"
-          step="0.1"
-          placeholder="Enter admin fee"
-        />
-
-        <span class="suffix">%</span>
-
-      </div>
-
-    </div>
-
-    <div style="height:12px"></div>
-
-    <div class="label">Admin fee based on</div>
-
-    <div class="admin-base">
-
-      <label>
-
-        <input
-          type="radio"
-          name="adminBase"
-          value="original"
-          checked
-        />
-
-        <span>Original loan amount</span>
-
-      </label>
-
-      <label>
-
-        <input
-          type="radio"
-          name="adminBase"
-          value="outstanding"
-        />
-
-        <span>Outstanding principal</span>
-
-      </label>
-
-    </div>
-
-  </section>
-
-  <section class="card">
-
-    <h2 class="section-title">Compare settlement dates</h2>
-
-    <div class="grid desktop-two">
-
-      <div class="date-card">
-
-        <div class="date-card-title">
-          Settlement date 1
-        </div>
-
-        <div class="date-grid">
-
-          <label>
-            <div class="date-caption">Day</div>
-            <select id="settle1Day" class="field"></select>
-          </label>
-
-          <label>
-            <div class="date-caption">Month</div>
-            <select id="settle1Month" class="field"></select>
-          </label>
-
-          <label>
-            <div class="date-caption">Year</div>
-            <select id="settle1Year" class="field"></select>
-          </label>
-
-        </div>
-
-      </div>
-
-      <div class="date-card">
-
-        <div class="date-card-title">
-          Settlement date 2
-        </div>
-
-        <div class="date-grid">
-
-          <label>
-            <div class="date-caption">Day</div>
-            <select id="settle2Day" class="field"></select>
-          </label>
-
-          <label>
-            <div class="date-caption">Month</div>
-            <select id="settle2Month" class="field"></select>
-          </label>
-
-          <label>
-            <div class="date-caption">Year</div>
-            <select id="settle2Year" class="field"></select>
-          </label>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-  <div
-    id="errorBox"
-    class="error"
-    role="alert"
-  ></div>
-
-  <section
-    class="grid desktop-two"
-    style="margin-bottom:14px"
-  >
-
-    <article class="result-card">
-
-      <div class="result-head">
-
-        <div>
-
-          <div class="eyebrow">
-            Date 1
-          </div>
-
-          <div
-            id="resultDate1"
-            class="result-date"
-          >
-            Select a settlement day
-          </div>
-
-        </div>
-
-      </div>
-
-      <div class="rows">
-
-        <div class="row">
-          <span>Instalments paid</span>
-          <strong id="paid1">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Remaining months</span>
-          <strong id="remaining1">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Outstanding principal</span>
-          <strong id="outstanding1">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Rule 78 rebate</span>
-          <strong id="rebate1">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Early settlement charge (20%)</span>
-          <strong id="charge1">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Admin fee</span>
-          <strong id="admin1">—</strong>
-        </div>
-
-      </div>
-
-      <div class="total">
-
-        <div class="total-label">
-          Estimated full settlement
-        </div>
-
-        <div
-          id="total1"
-          class="total-value"
-        >
-          —
-        </div>
-
-      </div>
-
-    </article>
-
-    <article class="result-card">
-
-      <div class="result-head">
-
-        <div>
-
-          <div class="eyebrow">
-            Date 2
-          </div>
-
-          <div
-            id="resultDate2"
-            class="result-date"
-          >
-            Select a settlement day
-          </div>
-
-        </div>
-
-        <div
-          id="differenceBadge"
-          class="badge hidden"
-        ></div>
-
-      </div>
-
-      <div class="rows">
-
-        <div class="row">
-          <span>Instalments paid</span>
-          <strong id="paid2">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Remaining months</span>
-          <strong id="remaining2">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Outstanding principal</span>
-          <strong id="outstanding2">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Rule 78 rebate</span>
-          <strong id="rebate2">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Early settlement charge (20%)</span>
-          <strong id="charge2">—</strong>
-        </div>
-
-        <div class="row">
-          <span>Admin fee</span>
-          <strong id="admin2">—</strong>
-        </div>
-
-      </div>
-
-      <div class="total">
-
-        <div class="total-label">
-          Estimated full settlement
-        </div>
-
-        <div
-          id="total2"
-          class="total-value"
-        >
-          —
-        </div>
-
-      </div>
-
-    </article>
-
-  </section>
-
-  <section class="card">
-
-    <div class="actions">
-
-      <button
-        id="clearBtn"
-        class="btn"
-        type="button"
-      >
-        Clear
-      </button>
-
-    </div>
-
-  </section>
-
-  <div class="note">
-    Estimate only. Actual redemption figures may differ due to bank repayment cut-off dates, settlement notice periods, instalment timing, rounding and contractual charges.
   </div>
 
+  <section class="card">
+    <div class="grid">
+
+      <div class="loan-row">
+        <label>
+          <div id="advancedToggleRow" class="label-row" role="button" tabindex="0" aria-label="Open additional options" aria-expanded="false">
+            <span class="label" style="margin-bottom:0">Original loan amount</span>
+            <button id="advancedToggle" class="triangle-btn" type="button" aria-label="Open additional options" aria-expanded="false"></button>
+          </div>
+          <div style="height:6px"></div>
+          <div class="wrap">
+            <span class="prefix">$</span>
+            <input id="loan" class="bare" type="text" inputmode="numeric" autocomplete="off" placeholder="Loan amount">
+          </div>
+        </label>
+        <div class="monthly-box">
+          <div class="monthly-label">Monthly instalment</div>
+          <div id="monthlyInstalment" class="monthly-value">—</div>
+        </div>
+      </div>
+
+      <div class="grid twocol-mobile">
+        <label>
+          <span class="label">Interest rate</span>
+          <div class="wrap">
+            <input id="rate" class="bare" type="number" inputmode="decimal" step="0.01" autocomplete="off" placeholder="">
+            <span class="suffix">% p.a.</span>
+          </div>
+        </label>
+
+        <label>
+          <span class="label">Original tenure</span>
+          <div class="wrap">
+            <input id="tenure" class="bare" type="number" inputmode="decimal" step="0.5" autocomplete="off" placeholder="">
+            <span class="suffix">years</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div id="advancedPanel" class="advanced-panel">
+      <div class="advanced-group">
+        <div class="label">Instalment payment timing</div>
+        <div class="segment">
+          <label>
+            <input type="radio" name="timing" value="arrears" checked>
+            <span class="small"><strong>In arrears</strong></span>
+          </label>
+          <label>
+            <input type="radio" name="timing" value="advance">
+            <span class="small"><strong>In advance</strong></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="advanced-group">
+        <div class="label">Admin fee</div>
+        <div class="feerow">
+          <button type="button" class="feebtn active" data-admin="1">1%</button>
+          <button type="button" class="feebtn" data-admin="1.5">1.5%</button>
+          <button type="button" class="feebtn" id="otherBtn" data-admin="other">Other</button>
+        </div>
+      </div>
+
+      <div class="advanced-group">
+        <div class="label">Admin fee based on</div>
+        <div class="adminbase">
+          <label>
+            <input type="radio" name="adminBase" value="original" checked>
+            <span>Original loan amount</span>
+          </label>
+          <label>
+            <input type="radio" name="adminBase" value="outstanding">
+            <span>Outstanding principal</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:7px"></div>
+
+    <div class="label">Loan start date</div>
+    <div class="dategrid">
+      <label><div class="caption">Day</div><select id="startDay" class="field"></select></label>
+      <label><div class="caption">Month</div><select id="startMonth" class="field"></select></label>
+      <label><div class="caption">Year</div><select id="startYear" class="field"></select></label>
+    </div>
+  </section>
+
+  <section class="card settlement-card">
+    <div class="settlement-line">
+      <div class="datecardtitle">Settlement date 1</div>
+      <div class="dategrid">
+        <label><div class="caption">Day</div><select id="s1Day" class="field"></select></label>
+        <label><div class="caption">Month</div><select id="s1Month" class="field"></select></label>
+        <label><div class="caption">Year</div><select id="s1Year" class="field"></select></label>
+      </div>
+    </div>
+
+    <div class="settlement-divider"></div>
+
+    <details id="date2Details" class="date2-details">
+      <summary class="date2-summary">
+        <span class="datecardtitle">Settlement date 2</span>
+      </summary>
+      <div class="settlement-line date2-body">
+        <div class="dategrid">
+          <label><div class="caption">Day</div><select id="s2Day" class="field"></select></label>
+          <label><div class="caption">Month</div><select id="s2Month" class="field"></select></label>
+          <label><div class="caption">Year</div><select id="s2Year" class="field"></select></label>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <div id="error" class="error"></div>
+
+  <section class="grid result-grid">
+    <article id="resultCard1" class="result">
+      <details class="result-details result-toggle">
+        <summary><span id="date1" class="resultdate">Select a settlement day</span></summary>
+        <div class="rows">
+          <div class="row"><span>No. of instalment paid</span><strong id="paid1">—</strong></div>
+          <div class="row"><span>Rebates (months)</span><strong id="rem1">—</strong></div>
+          <div class="row"><span>Interest</span><strong id="int1">—</strong></div>
+          <div class="row"><span>Total payable</span><strong id="pay1">—</strong></div>
+          <div class="row"><span>Instalment paid</span><strong id="inst1">—</strong></div>
+          <div class="row"><span>Outstanding Balance</span><strong id="bal1">—</strong></div>
+          <div class="row"><span>- Interest Rebates</span><strong id="reb1">—</strong></div>
+          <div class="row"><span>+ Rebate deductible amount</span><strong id="ded1">—</strong></div>
+          <div class="row"><span>+ Processing fees</span><strong id="proc1">—</strong></div>
+          <div class="row"><span>+ GST on Processing fees</span><strong id="gst1">—</strong></div>
+        </div>
+      </details>
+
+      <div class="total">
+        <div class="totallabel">Estimated full settlement</div>
+        <div id="tot1" class="totalvalue">—</div>
+      </div>
+    </article>
+
+    <article id="resultCard2" class="result hidden">
+      <details class="result-details result-toggle">
+        <summary><span id="date2" class="resultdate">Select a settlement day</span></summary>
+        <div class="rows">
+          <div class="row"><span>No. of instalment paid</span><strong id="paid2">—</strong></div>
+          <div class="row"><span>Rebates (months)</span><strong id="rem2">—</strong></div>
+          <div class="row"><span>Interest</span><strong id="int2">—</strong></div>
+          <div class="row"><span>Total payable</span><strong id="pay2">—</strong></div>
+          <div class="row"><span>Instalment paid</span><strong id="inst2">—</strong></div>
+          <div class="row"><span>Outstanding Balance</span><strong id="bal2">—</strong></div>
+          <div class="row"><span>- Interest Rebates</span><strong id="reb2">—</strong></div>
+          <div class="row"><span>+ Rebate deductible amount</span><strong id="ded2">—</strong></div>
+          <div class="row"><span>+ Processing fees</span><strong id="proc2">—</strong></div>
+          <div class="row"><span>+ GST on Processing fees</span><strong id="gst2">—</strong></div>
+        </div>
+      </details>
+
+      <div class="total">
+        <div class="totallabel">Estimated full settlement</div>
+        <div id="tot2" class="totalvalue">—</div>
+      </div>
+    </article>
+  </section>
+
+  <div id="badge" class="difference hidden"></div>
+
+<div class="footer">Bernice Chua | @bernice.mercedes</div>
 </main>
 
 <script>
-
 (() => {
+  const $ = id => document.getElementById(id);
+  const now = new Date();
+  const CM = now.getMonth() + 1;
+  const CY = now.getFullYear();
+  const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-  const $ = (id) =>
-    document.getElementById(id);
+  let adminChoice = 1;
+  let customAdmin = 0;
+  let hadCompleteCalculation = false;
+  const STORAGE_KEY='fullSettlementStateV1';
+  let restoringState=false;
 
-  const now =
-    new Date();
-
-  const CURRENT_MONTH =
-    now.getMonth() + 1;
-
-  const CURRENT_YEAR =
-    now.getFullYear();
-
-  const MONTHS = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec"
-  ];
-
-  const EARLY_SETTLEMENT_CHARGE_RATE =
-    0.20;
-
-  let adminChoice =
-    1;
-
-
-  function fillDays(id) {
-
-    const el =
-      $(id);
-
-    el.innerHTML =
-      '<option value="">Day</option>';
-
-    for (
-      let d = 1;
-      d <= 31;
-      d++
-    ) {
-
-      const option =
-        document.createElement("option");
-
-      option.value =
-        String(d);
-
-      option.textContent =
-        String(d);
-
-      el.appendChild(option);
-
+  function fillDays(id){
+    const e=$(id);
+    e.innerHTML='<option value="">Day</option>';
+    for(let d=1;d<=31;d++){
+      const o=document.createElement('option');
+      o.value=d;o.textContent=d;e.appendChild(o);
     }
-
   }
 
-
-  function fillMonths(
-    id,
-    selected = null
-  ) {
-
-    const el =
-      $(id);
-
-    el.innerHTML =
-      '<option value="">Month</option>';
-
-    MONTHS.forEach(
-      (name, index) => {
-
-        const option =
-          document.createElement("option");
-
-        option.value =
-          String(index + 1);
-
-        option.textContent =
-          name;
-
-        if (
-          selected === index + 1
-        ) {
-          option.selected = true;
-        }
-
-        el.appendChild(option);
-
-      }
-    );
-
+  function fillMonths(id,sel){
+    const e=$(id);
+    e.innerHTML='<option value="">Month</option>';
+    MONTHS.forEach((m,i)=>{
+      const o=document.createElement('option');
+      o.value=i+1;o.textContent=m;
+      if(sel===i+1)o.selected=true;
+      e.appendChild(o);
+    });
   }
 
-
-  function fillStartYears() {
-
-    const el =
-      $("startYear");
-
-    el.innerHTML =
-      '<option value="">Year</option>';
-
-
-    for (
-      let y = CURRENT_YEAR;
-      y >= CURRENT_YEAR - 9;
-      y--
-    ) {
-
-      const option =
-        document.createElement("option");
-
-      option.value =
-        String(y);
-
-      option.textContent =
-        String(y);
-
-      el.appendChild(option);
-
+  function fillStartYears(){
+    const e=$('startYear');
+    e.innerHTML='<option value="">Year</option>';
+    for(let y=CY;y>=CY-9;y--){
+      const o=document.createElement('option');
+      o.value=y;o.textContent=y;e.appendChild(o);
     }
-
-
-    const divider =
-      document.createElement("option");
-
-    divider.disabled =
-      true;
-
-    divider.textContent =
-      "────────";
-
-    el.appendChild(divider);
-
-
-    for (
-      let y = CURRENT_YEAR - 10;
-      y >= 2000;
-      y--
-    ) {
-
-      const option =
-        document.createElement("option");
-
-      option.value =
-        String(y);
-
-      option.textContent =
-        String(y);
-
-      el.appendChild(option);
-
+    const x=document.createElement('option');
+    x.disabled=true;x.textContent='────────';e.appendChild(x);
+    for(let y=CY-10;y>=2000;y--){
+      const o=document.createElement('option');
+      o.value=y;o.textContent=y;e.appendChild(o);
     }
-
   }
 
-
-  function fillSettlementYears(id) {
-
-    const el =
-      $(id);
-
-    el.innerHTML =
-      '<option value="">Year</option>';
-
-    for (
-      let y = CURRENT_YEAR - 2;
-      y <= CURRENT_YEAR + 10;
-      y++
-    ) {
-
-      const option =
-        document.createElement("option");
-
-      option.value =
-        String(y);
-
-      option.textContent =
-        String(y);
-
-      if (
-        y === CURRENT_YEAR
-      ) {
-        option.selected = true;
-      }
-
-      el.appendChild(option);
-
+  function fillSetYears(id){
+    const e=$(id);
+    e.innerHTML='<option value="">Year</option>';
+    for(let y=CY-2;y<=CY+10;y++){
+      const o=document.createElement('option');
+      o.value=y;o.textContent=y;
+      if(y===CY)o.selected=true;
+      e.appendChild(o);
     }
-
   }
 
-
-  [
-    "startDay",
-    "settle1Day",
-    "settle2Day"
-  ].forEach(fillDays);
-
-
-  fillMonths(
-    "startMonth"
-  );
-
+  ['startDay','s1Day','s2Day'].forEach(fillDays);
+  fillMonths('startMonth');
+  fillMonths('s1Month',CM);
+  fillMonths('s2Month',CM);
   fillStartYears();
+  fillSetYears('s1Year');
+  fillSetYears('s2Year');
 
+  function captureState(){
+    return {
+      loan:$('loan').value,
+      rate:$('rate').value,
+      tenure:$('tenure').value,
+      startDay:$('startDay').value,
+      startMonth:$('startMonth').value,
+      startYear:$('startYear').value,
+      s1Day:$('s1Day').value,
+      s1Month:$('s1Month').value,
+      s1Year:$('s1Year').value,
+      s2Day:$('s2Day').value,
+      s2Month:$('s2Month').value,
+      s2Year:$('s2Year').value,
+      timing:document.querySelector('input[name="timing"]:checked')?.value || 'arrears',
+      adminBase:document.querySelector('input[name="adminBase"]:checked')?.value || 'original',
+      adminChoice,
+      customAdmin,
+      advancedOpen:$('advancedPanel').classList.contains('open'),
+      date2Open:$('date2Details').open
+    };
+  }
 
-  [
-    "settle1Month",
-    "settle2Month"
-  ].forEach(
-    id =>
-      fillMonths(
-        id,
-        CURRENT_MONTH
-      )
-  );
+  function saveState(){
+    if(restoringState) return;
+    try{
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(captureState()));
+    }catch(e){}
+  }
 
+  function restoreState(){
+    let s=null;
+    try{
+      s=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+    }catch(e){}
+    if(!s) return false;
 
-  [
-    "settle1Year",
-    "settle2Year"
-  ].forEach(
-    fillSettlementYears
-  );
+    restoringState=true;
+    const fields=['loan','rate','tenure','startDay','startMonth','startYear',
+                  's1Day','s1Month','s1Year','s2Day','s2Month','s2Year'];
+    fields.forEach(id=>{
+      if(s[id]!==undefined && s[id]!==null) $(id).value=String(s[id]);
+    });
 
+    const timing=document.querySelector(`input[name="timing"][value="${s.timing||'arrears'}"]`);
+    if(timing) timing.checked=true;
 
-  function cleanLoanAmount(value) {
+    const base=document.querySelector(`input[name="adminBase"][value="${s.adminBase||'original'}"]`);
+    if(base) base.checked=true;
 
-    const cleaned =
-      String(
-        value || ""
-      ).replace(
-        /[^\d]/g,
-        ""
-      );
+    adminChoice=s.adminChoice==='other' ? 'other' : Number(s.adminChoice||1);
+    customAdmin=Number(s.customAdmin||0);
 
-    return cleaned
-      ? Number(cleaned)
-  
+    document.querySelectorAll('.feebtn').forEach(x=>x.classList.remove('active'));
+    if(adminChoice==='other'){
+      const btn=$('otherBtn');
+      btn.classList.add('active');
+      btn.innerHTML='<input id="otherInput" type="number" inputmode="decimal" step="0.1" min="0" placeholder="%" aria-label="Other admin fee">';
+      const inp=$('otherInput');
+      inp.value=customAdmin || '';
+      inp.addEventListener('input',()=>{
+        customAdmin=Math.max(0,Number(inp.value)||0);
+        update();
+      });
+      inp.addEventListener('click',e=>e.stopPropagation());
+    }else{
+      const btn=document.querySelector(`.feebtn[data-admin="${adminChoice}"]`);
+      if(btn) btn.classList.add('active');
+    }
+
+    if(s.advancedOpen){
+      $('advancedPanel').classList.add('open');
+      $('advancedToggle').classList.add('open');
+      $('advancedToggle').setAttribute('aria-expanded','true');
+      $('advancedToggleRow').setAttribute('aria-expanded','true');
+    }
+    $('date2Details').open=!!s.date2Open;
+
+    restoringState=false;
+    return true;
+  }
+
+  function clean(v){
+    return Number(String(v||'').replace(/[^\d]/g,'')) || 0;
+  }
+
+  $('loan').addEventListener('input',e=>{
+    const digits=String(e.target.value).replace(/[^\d]/g,'');
+    e.target.value=digits ? Number(digits).toLocaleString('en-SG') : '';
+    update();
+  });
+
+  $('loan').addEventListener('focus',e=>{
+    setTimeout(()=>e.target.select(),0);
+  });
+
+  ['rate','tenure'].forEach(id=>{
+    $(id).addEventListener('focus',e=>{
+      setTimeout(()=>e.target.select(),0);
+    });
+    $(id).addEventListener('click',e=>{
+      setTimeout(()=>e.target.select(),0);
+    });
+  });
+
+  function mk(prefix){
+    const d=Number($(prefix+'Day').value);
+    const m=Number($(prefix+'Month').value);
+    const y=Number($(prefix+'Year').value);
+
+    if(!d||!m||!y)return null;
+
+    const dt=new Date(Date.UTC(y,m-1,d));
+
+    return (
+      dt.getUTCFullYear()===y &&
+      dt.getUTCMonth()===m-1 &&
+      dt.getUTCDate()===d
+    ) ? dt : 'invalid';
+  }
+
+  function elapsed(a,b){
+    let n=(b.getUTCFullYear()-a.getUTCFullYear())*12 +
+          b.getUTCMonth()-a.getUTCMonth();
+
+    if(b.getUTCDate()<a.getUTCDate())n--;
+    return Math.max(0,n);
+  }
+
+  function money(v){
+    return Number.isFinite(v)
+      ? '$'+v.toLocaleString('en-SG',{minimumFractionDigits:2,maximumFractionDigits:2})
+      : '—';
+  }
+
+  function fmt(d){
+    return new Intl.DateTimeFormat('en-SG',{
+      day:'numeric',month:'short',year:'numeric',timeZone:'UTC'
+    }).format(d);
+  }
+
+  function adminRate(){
+    return adminChoice==='other' ? customAdmin : Number(adminChoice);
+  }
+
+  function calc(prefix){
+    const loan=clean($('loan').value);
+    const rateText=$('rate').value.trim();
+    const tenureText=$('tenure').value.trim();
+    const rate=rateText==='' ? NaN : Number(rateText);
+    const tenureYears=tenureText==='' ? NaN : Number(tenureText);
+    const N=Number.isFinite(tenureYears) ? Math.round(tenureYears*12) : 0;
+    const start=mk('start');
+    const set=mk(prefix);
+
+    if(start==='invalid'||set==='invalid'){
+      return {error:'Please enter a valid calendar date.'};
+    }
+
+    if(!(loan>0)||!Number.isFinite(rate)||!(rate>=0)||!(N>0)||!start||!set){
+      return null;
+    }
+
+    if(set<start){
+      return {error:'Settlement date cannot be before the loan start date.'};
+    }
+
+    let paid=elapsed(start,set);
+    if(document.querySelector('input[name="timing"]:checked').value==='advance'){
+      paid++;
+    }
+    paid=Math.min(N,Math.max(0,paid));
+
+    const rem=Math.max(0,N-paid);
+    const interest=loan*(rate/100)*tenureYears;
+    const totalPayable=loan+interest;
+
+    // Contract instalment shown and used as whole dollars, rounded up.
+    const monthly=Math.ceil(totalPayable/N);
+    const instalmentPaid=Math.min(totalPayable, monthly*paid);
+    const outstandingBalance=Math.max(0,totalPayable-instalmentPaid);
+
+    // Rule 78 rebate and standard 20% early settlement charge.
+    const rule78Rebate=rem>0
+      ? ((rem*(rem+1))/(N*(N+1)))*interest
+      : 0;
+    const earlySettlementCharge=rule78Rebate*0.20;
+    const netRebate=Math.max(0,rule78Rebate-earlySettlementCharge);
+
+    // Processing fee basis retains the user's selected setting.
+    const balanceAfterFullRule78Rebate=Math.max(0,outstandingBalance-rule78Rebate);
+    const adminBaseValue=
+      document.querySelector('input[name="adminBase"]:checked').value==='outstanding'
+      ? balanceAfterFullRule78Rebate
+      : loan;
+
+    const processingFee=adminBaseValue*(adminRate()/100);
+    const gst=processingFee*0.09;
+    const total=Math.max(0,outstandingBalance-rule78Rebate+earlySettlementCharge+processingFee+gst);
+
+    return {
+      date:set,
+      paid,
+      rem,
+      interest,
+      totalPayable,
+      monthly,
+      instalmentPaid,
+      outstandingBalance,
+      rebate:rule78Rebate,
+      deductible:earlySettlementCharge,
+      processingFee,
+      gst,
+      total
+    };
+  }
+
+  function render(i,r){
+    $('date'+i).textContent=r?.date ? fmt(r.date) : 'Select a settlement day';
+
+    const ids=['paid','rem','int','pay','inst','bal','reb','ded','proc','gst','tot'];
+    if(!r||r.error){
+      ids.forEach(k=>$(k+i).textContent='—');
+      return;
+    }
+
+    $('paid'+i).textContent=r.paid;
+    $('rem'+i).textContent=r.rem;
+    $('int'+i).textContent=money(r.interest);
+    $('pay'+i).textContent=money(r.totalPayable);
+    $('inst'+i).textContent=money(r.instalmentPaid);
+    $('bal'+i).textContent=money(r.outstandingBalance);
+    $('reb'+i).textContent=money(r.rebate);
+    $('ded'+i).textContent=money(r.deductible);
+    $('proc'+i).textContent=money(r.processingFee);
+    $('gst'+i).textContent=money(r.gst);
+    $('tot'+i).textContent=money(r.total);
+  }
+
+  function update(){
+    const a=calc('s1');
+    const b=calc('s2');
+
+    const hasShareData = !!(a && !a.error);
+    $('shareBtn').disabled = !hasShareData;
+
+    const hasAnyData =
+      $('loan').value.trim()!=='' ||
+      $('rate').value.trim()!=='' ||
+      $('tenure').value.trim()!=='' ||
+      $('startDay').value!=='' ||
+      $('startMonth').value!=='' ||
+      $('startYear').value!=='' ||
+      $('s1Day').value!=='' ||
+      $('s2Day').value!=='';
+    $('clearBtn').disabled = !hasAnyData;
+
+    const loanValue=clean($('loan').value);
+    const rateValue=$('rate').value;
+    const tenureValue=$('tenure').value;
+    if(loanValue>0 && rateValue!=='' && tenureValue!==''){
+      const r=Number(rateValue), years=Number(tenureValue), n=Math.round(years*12);
+      const totalInterest=loanValue*(r/100)*years;
+      if(r>=0&&years>0&&n>0){
+        const roundedMonthly=Math.ceil((loanValue+totalInterest)/n);
+        $('monthlyInstalment').textContent='$'+roundedMonthly.toLocaleString('en-SG');
+      }else{
+        $('monthlyInstalment').textContent='—';
+      }
+    }else{
+      $('monthlyInstalment').textContent='—';
+    }
+
+    render(1,a);
+    render(2,b);
+
+    const hasDate2Result=!!(b&&!b.error);
+    $('resultCard2').classList.toggle('hidden',!hasDate2Result);
+    document.querySelector('.result-grid').classList.toggle('single',!hasDate2Result);
+
+    const er=a?.error||b?.error;
+    $('error').style.display=er?'block':'none';
+    $('error').textContent=er||'';
+
+    const complete=!!(a&&b&&!a.error&&!b.error);
+
+    if(complete){
+      const diff=b.total-a.total;
+
+      $('badge').textContent=
+        Math.abs(diff)<0.005
+          ? 'Same estimated settlement'
+          : money(Math.abs(diff)) + ' difference';
+
+      $('badge').classList.remove('hidden');
+
+      if(!hadCompleteCalculation){
+        hadCompleteCalculation=true;
+        setTimeout(()=>{
+          document.querySelector('.result')?.scrollIntoView({
+            behavior:'smooth',
+            block:'start'
+          });
+        },150);
+      }
+    }else{
+      hadCompleteCalculation=false;
+      $('badge').classList.add('hidden');
+    }
+
+    saveState();
+  }
+
+  function setAdminButtonNormal(btn,label){
+    btn.innerHTML=label;
+  }
+
+  document.querySelectorAll('.feebtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const value=btn.dataset.admin;
+
+      document.querySelectorAll('.feebtn').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active');
+
+      if(value==='other'){
+        adminChoice='other';
+        btn.innerHTML='<input id="otherInput" type="number" inputmode="decimal" step="0.1" min="0" placeholder="%" aria-label="Other admin fee">';
+        const input=$('otherInput');
+        input.value=customAdmin ? customAdmin : '';
+        setTimeout(()=>input.focus(),0);
+
+        input.addEventListener('input',()=>{
+          customAdmin=Math.max(0,Number(input.value)||0);
+          update();
+        });
+
+        input.addEventListener('click',e=>e.stopPropagation());
+      }else{
+        adminChoice=Number(value);
+        setAdminButtonNormal($('otherBtn'),'Other');
+        update();
+      }
+    });
+  });
+
+  document.querySelectorAll('input:not(#loan),select').forEach(x=>{
+    x.addEventListener('input',update);
+    x.addEventListener('change',update);
+  });
+
+  const advancedToggle=$('advancedToggle');
+  const advancedToggleRow=$('advancedToggleRow');
+  const advancedPanel=$('advancedPanel');
+
+  function toggleAdvanced(){
+    const open=advancedPanel.classList.toggle('open');
+    advancedToggle.classList.toggle('open',open);
+    advancedToggle.setAttribute('aria-expanded',String(open));
+    advancedToggle.setAttribute('aria-label',open?'Close additional options':'Open additional options');
+    advancedToggleRow.setAttribute('aria-expanded',String(open));
+    advancedToggleRow.setAttribute('aria-label',open?'Close additional options':'Open additional options');
+    saveState();
+  }
+
+  advancedToggle.addEventListener('click',e=>{
+    e.stopPropagation();
+    toggleAdvanced();
+  });
+
+  advancedToggleRow.addEventListener('click',toggleAdvanced);
+
+  advancedToggleRow.addEventListener('keydown',e=>{
+    if(e.key==='Enter' || e.key===' '){
+      e.preventDefault();
+      toggleAdvanced();
+    }
+  });
+
+  $('clearBtn').addEventListener('click',()=>{
+    ['loan','rate','tenure','startDay','startMonth','startYear','s1Day','s2Day'].forEach(id=>$(id).value='');
+
+    document.querySelector('input[name="timing"][value="arrears"]').checked=true;
+    document.querySelector('input[name="adminBase"][value="original"]').checked=true;
+
+    adminChoice=1;
+    customAdmin=0;
+
+    document.querySelectorAll('.feebtn').forEach(x=>x.classList.remove('active'));
+    document.querySelector('.feebtn[data-admin="1"]').classList.add('active');
+    setAdminButtonNormal($('otherBtn'),'Other');
+
+    advancedPanel.classList.remove('open');
+    advancedToggle.classList.remove('open');
+    advancedToggle.setAttribute('aria-expanded','false');
+    advancedToggleRow.setAttribute('aria-expanded','false');
+    advancedToggleRow.setAttribute('aria-label','Open additional options');
+    $('date2Details').open=false;
+
+    $('s1Month').value=CM;
+    $('s2Month').value=CM;
+    $('s1Year').value=CY;
+    $('s2Year').value=CY;
+
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    update();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+
+  function roundBox(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+  }
+
+  function loadCanvasImage(src){
+    return new Promise(resolve=>{
+      const img=new Image();
+      img.onload=()=>resolve(img);
+      img.onerror=()=>resolve(null);
+      img.src=src;
+    });
+  }
+
+  async function createShareImage(a,b){
+    const hasDate1=!!(a&&!a.error);
+    const hasDate2=!!(b&&!b.error);
+
+    const c=document.createElement('canvas');
+    c.width=1080;
+    c.height=hasDate2?1080:860;
+    const ctx=c.getContext('2d');
+
+    const NAVY='#0b3558';
+    const LIGHT_GREY='#f3f6f8';
+    const BLUE_BG='#dff0fb';
+    const BLUE_TEXT='#0b3f78';
+    const GREEN_BG='#e6f5e7';
+    const GREEN_TEXT='#0a5a46';
+    const ORANGE_BG='#fff1d8';
+    const ORANGE='#e37d00';
+    const TEXT='#20242a';
+    const MUTED='#5e6670';
+    const DIV='#b6c2cc';
+
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,c.width,c.height);
+
+    // Header bar
+    ctx.fillStyle=NAVY;
+    roundBox(ctx,20,20,1040,150,28);
+    ctx.fill();
+
+    // App icon
+    const icon=await loadCanvasImage('./icon-192.png');
+    if(icon){
+      ctx.save();
+      roundBox(ctx,45,42,110,110,20);
+      ctx.clip();
+      ctx.drawImage(icon,45,42,110,110);
+      ctx.restore();
+    }
+
+    // vertical divider
+    ctx.strokeStyle='#d7e2ec';
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(185,48);
+    ctx.lineTo(185,145);
+    ctx.stroke();
+
+    ctx.fillStyle='#ffffff';
+    ctx.font='700 52px Arial';
+    ctx.fillText('Full Settlement',225,113);
+
+    const loan=clean($('loan').value);
+    const rate=$('rate').value;
+    const tenure=$('tenure').value;
+    const monthlyText=$('monthlyInstalment').textContent || '-';
+
+    // Top info strip
+    ctx.fillStyle=LIGHT_GREY;
+    roundBox(ctx,45,190,990,150,24);
+    ctx.fill();
+
+    const cols=[190,540,860];
+    const labels=['Loan Amount','Interest / Tenure','Monthly Instalment'];
+    const vals=[
+      loan?money(loan):'-',
+      (rate!==''&&tenure!=='') ? rate+'%  |  '+tenure+' yrs' : '-',
+      monthlyText
+    ];
+    for(let i=0;i<3;i++){
+      ctx.fillStyle=MUTED;
+      ctx.font='700 24px Arial';
+      ctx.textAlign='center';
+      ctx.fillText(labels[i],cols[i],240);
+      ctx.fillStyle=TEXT;
+      ctx.font='700 34px Arial';
+      ctx.fillText(vals[i],cols[i],292);
+    }
+    ctx.strokeStyle=DIV;
+    ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(365,215); ctx.lineTo(365,315); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(700,215); ctx.lineTo(700,315); ctx.stroke();
+
+    function settlementPanel(y,bg,titleColor,label,r){
+      ctx.fillStyle=bg;
+      roundBox(ctx,45,y,990,170,24);
+      ctx.fill();
+
+      ctx.fillStyle=titleColor;
+      ctx.font='700 26px Arial';
+      ctx.textAlign='left';
+      ctx.fillText(label,85,y+52);
+
+      ctx.fillStyle=titleColor;
+      ctx.font='700 42px Arial';
+      ctx.fillText(fmt(r.date),85,y+112);
+
+      ctx.strokeStyle=DIV;
+      ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(540,y+28); ctx.lineTo(540,y+142); ctx.stroke();
+
+      ctx.fillStyle=MUTED;
+      ctx.font='700 24px Arial';
+      ctx.fillText('Estimated Full Settlement',600,y+52);
+
+      ctx.fillStyle=titleColor;
+      ctx.font='700 43px Arial';
+      ctx.fillText(money(r.total),600,y+112);
+    }
+
+    if(hasDate1){
+      settlementPanel(370,BLUE_BG,BLUE_TEXT,'SETTLEMENT 1',a);
+    }
+
+    if(hasDate2){
+      settlementPanel(565,GREEN_BG,GREEN_TEXT,'SETTLEMENT 2',b);
+
+      const diff=Math.abs(b.total-a.total);
+      ctx.fillStyle=ORANGE_BG;
+      roundBox(ctx,45,760,990,120,24);
+      ctx.fill();
+
+      ctx.fillStyle=TEXT;
+      ctx.font='700 30px Arial';
+      ctx.textAlign='center';
+      ctx.fillText('Difference',420,832);
+
+      ctx.fillStyle=ORANGE;
+      ctx.font='700 40px Arial';
+      ctx.fillText(diff<0.005?'$0':money(diff),690,832);
+    }
+
+    // Footer
+    ctx.fillStyle=MUTED;
+    ctx.font='400 21px Arial';
+    ctx.textAlign='center';
+    ctx.fillText('Bernice Chua · @bernice.mercedes',540,hasDate2?1015:800);
+
+    ctx.textAlign='left';
+    return c;
+  }
+
+  $('shareBtn').addEventListener('click',async()=>{
+    const a=calc('s1'), b=calc('s2');
+    if(!a || a.error) return;
+    let text='Full Settlement';
+    if(a&&!a.error)text+='\n'+fmt(a.date)+': '+money(a.total);
+    if(b&&!b.error)text+='\n'+fmt(b.date)+': '+money(b.total);
+
+    try{
+      const canvas=await createShareImage(a,b);
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+      const file=new File([blob],'full-settlement.png',{type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({title:'Full Settlement',text,files:[file]});
+      }else if(navigator.share){
+        await navigator.share({title:'Full Settlement',text,url:location.href});
+      }else if(navigator.clipboard){
+        await navigator.clipboard.writeText(text+'\n'+location.href);
+        alert('Settlement details copied.');
+      }
+    }catch(e){}
+  });
+
+  $('date2Details').addEventListener('toggle',saveState);
+
+  const autoOpenDate2=()=>{
+    if($('s2Day').value!=='' || $('s2Month').value!=='' || $('s2Year').value!==''){
+      $('date2Details').open=true;
+    }
+  };
+  ['s2Day','s2Month','s2Year'].forEach(id=>$(id).addEventListener('change',autoOpenDate2));
+
+  restoreState();
+  update();
+
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{
+      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+    });
+  }
+})();
+</script>
+</body>
+</html>
