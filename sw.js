@@ -1,4 +1,4 @@
-const CACHE='full-settlement-v15';
+const CACHE='full-settlement-v16';
 const ASSETS=[
   './',
   './index.html',

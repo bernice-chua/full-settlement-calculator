@@ -604,10 +604,13 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
     const netRebate=Math.max(0,rule78Rebate-earlySettlementCharge);
 
     // Processing fee basis retains the user's selected setting.
-    const balanceAfterFullRule78Rebate=Math.max(0,outstandingBalance-rule78Rebate);
+    const balanceAfterRebateDeductible=Math.max(
+      0,
+      outstandingBalance-rule78Rebate+earlySettlementCharge
+    );
     const adminBaseValue=
       document.querySelector('input[name="adminBase"]:checked').value==='outstanding'
-      ? balanceAfterFullRule78Rebate
+      ? balanceAfterRebateDeductible
       : loan;
 
     const processingFee=adminBaseValue*(adminRate()/100);
@@ -871,11 +874,7 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
     // App icon
     const icon=await loadCanvasImage('./icon-192.png');
     if(icon){
-      ctx.save();
-      roundBox(ctx,45,42,110,110,20);
-      ctx.clip();
       ctx.drawImage(icon,45,42,110,110);
-      ctx.restore();
     }
 
     // vertical divider
