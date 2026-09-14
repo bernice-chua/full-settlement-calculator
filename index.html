@@ -3,26 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0b3558">
+<meta name="theme-color" content="#0E284D">
 <title>Full Settlement</title>
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Full Settlement">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
 <style>
 :root{
-  --bg:#f5f6f8;
+  --bg:#f5f5f7;
   --card:#ffffff;
-  --text:#111827;
-  --muted:#6b7280;
-  --line:#d9dde3;
-  --soft:#f1f3f5;
-  --navy:#0b3558;
-  --radius-card:16px;
-  --radius-field:12px;
-  --control-h:46px;
+  --text:#111111;
+  --muted:#737373;
+  --line:#dcdce0;
+  --soft:#f7f7f8;
+  --navy:#0E284D;
+  --radius-card:24px;
+  --radius-field:16px;
+  --control-h:52px;
   --label-size:13px;
   --secondary-size:11px;
   --result-size:22px;
@@ -31,14 +32,14 @@
 html{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
 body{margin:0;background:var(--bg)}
 button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
-.page{max-width:900px;margin:0 auto;padding:12px 12px calc(18px + env(safe-area-inset-bottom))}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px;padding-top:env(safe-area-inset-top)}
-.title{font-size:30px;line-height:1.05;font-weight:800;letter-spacing:-.02em}
-.top-actions{display:flex;gap:18px;align-items:center}
-.text-btn{appearance:none;border:0;background:transparent;color:var(--text);font:700 15px/1 system-ui;padding:10px 2px;min-width:46px}
+.page{max-width:900px;margin:0 auto;padding:18px 18px calc(24px + env(safe-area-inset-bottom))}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;padding-top:env(safe-area-inset-top)}
+.title{font-size:clamp(25px,5vw,32px);line-height:1.05;font-weight:800;letter-spacing:-.02em}
+.top-actions{display:flex;gap:28px;align-items:center}
+.text-btn{appearance:none;border:0;background:transparent;color:var(--text);font:700 15px/1 system-ui;padding:8px 4px;min-width:58px;min-height:44px}
 .text-btn:active{opacity:.55}
 .text-btn:disabled{color:#aeb4bd;opacity:.7;cursor:default;pointer-events:none}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-card);padding:12px;margin-bottom:10px}
+.card{background:var(--card);border:0;border-radius:var(--radius-card);padding:18px;margin-bottom:14px;box-shadow:0 4px 18px rgba(0,0,0,.05)}
 .grid{display:grid;gap:8px}
 .loan-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}.monthly-box{min-width:130px;text-align:right}.monthly-label{font-size:var(--label-size);font-weight:700;color:var(--muted);margin-bottom:5px}.monthly-value{min-height:var(--control-h);display:flex;align-items:center;justify-content:flex-end;font-size:20px;font-weight:800;padding:0 2px;color:var(--text)}
 .twocol-mobile{grid-template-columns:1fr 1fr}
@@ -833,7 +834,7 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
     c.height=hasDate2?1080:860;
     const ctx=c.getContext('2d');
 
-    const NAVY='#0b3558';
+    const NAVY='#0E284D';
     const LIGHT_GREY='#f3f6f8';
     const BLUE_BG='#dff0fb';
     const BLUE_TEXT='#0b3f78';
@@ -856,7 +857,7 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
     // App icon
     const icon=await loadCanvasImage('./share-logo.png');
     if(icon){
-      ctx.drawImage(icon,48,45,104,104);
+      ctx.drawImage(icon,38,35,124,124);
     }
 
     // vertical divider
@@ -997,7 +998,7 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
 
   if('serviceWorker' in navigator){
     window.addEventListener('load',()=>{
-      navigator.serviceWorker.register('./sw.js').catch(()=>{});
+      navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).catch(()=>{});
     });
   }
 })();

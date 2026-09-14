@@ -1,11 +1,11 @@
 {
-  "name": "Full Settlement",
-  "short_name": "Full Settlement",
+  "name": "Full Settlement Calculator",
+  "short_name": "Settlement",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f5f6f8",
-  "theme_color": "#0b3558",
+  "background_color": "#F5F5F7",
+  "theme_color": "#0E284D",
   "icons": [
     {
       "src": "icon-192.png",
