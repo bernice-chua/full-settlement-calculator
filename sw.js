@@ -1,7 +1,5 @@
-const CACHE = 'full-settlement-v20';
-const ASSETS = [
-  './',
-  './index.html',
+const CACHE = 'full-settlement-v21';
+const STATIC_ASSETS = [
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
@@ -10,7 +8,9 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)));
+  event.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(STATIC_ASSETS))
+  );
   self.skipWaiting();
 });
 
@@ -26,17 +26,32 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
+  const request = event.request;
+  const isNavigation = request.mode === 'navigate' ||
+    request.headers.get('accept')?.includes('text/html');
 
-      return fetch(event.request)
+  if (isNavigation) {
+    event.respondWith(
+      fetch(request)
         .then(response => {
           const copy = response.clone();
-          caches.open(CACHE).then(cache => cache.put(event.request, copy));
+          caches.open(CACHE).then(cache => cache.put('./index.html', copy));
           return response;
         })
-        .catch(() => caches.match('./index.html'));
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(request).then(cached => {
+      if (cached) return cached;
+
+      return fetch(request).then(response => {
+        const copy = response.clone();
+        caches.open(CACHE).then(cache => cache.put(request, copy));
+        return response;
+      });
     })
   );
 });
