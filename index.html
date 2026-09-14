@@ -41,7 +41,8 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
   background:var(--card);border:1px solid var(--line);border-radius:16px;
   padding:10px;margin-bottom:7px
 }
-.grid{display:grid;gap:8px}.loan-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}.monthly-box{min-width:130px;text-align:right}.monthly-label{font-size:13px;color:var(--muted);margin-bottom:6px}.monthly-value{min-height:44px;display:flex;align-items:center;justify-content:flex-end;font-size:17px;font-weight:800;padding:0 2px}
+.grid{display:grid;gap:8px}
+.loan-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end}.monthly-box{min-width:130px;text-align:right}.monthly-label{font-size:13px;color:var(--muted);margin-bottom:6px}.monthly-value{min-height:44px;display:flex;align-items:center;justify-content:flex-end;font-size:17px;font-weight:800;padding:0 2px}
 .twocol-mobile{grid-template-columns:1fr 1fr}
 .label{display:block;font-size:14px;font-weight:700;margin-bottom:4px}
 .wrap{
@@ -85,7 +86,6 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
   width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;
   background:#fff;padding:0 10px;outline:none;font-size:16px;color:var(--text)
 }
-.sectiontitle{font-size:15px;font-weight:750;margin:0 0 12px}
 .feerow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .feebtn{
   min-height:46px;border:1px solid var(--line);background:#fff;border-radius:13px;
@@ -98,13 +98,15 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
 }
 .adminbase label{overflow:hidden}
 .adminbase span{font-size:11px;line-height:1.12;white-space:nowrap}
-.datecard{border:1px solid var(--line);border-radius:14px;padding:9px;background:#fff}.settlement-card{padding:10px}.settlement-line{display:grid;gap:5px}.settlement-divider{height:1px;background:var(--line);margin:8px 0}
+.settlement-card{padding:10px}
+.settlement-line{display:grid;gap:5px}
+.settlement-divider{height:1px;background:var(--line);margin:8px 0}
 .date2-details summary{list-style:none;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
 .date2-details summary::-webkit-details-marker{display:none}
 .date2-details summary::after{content:'▼';font-size:11px;color:var(--muted)}
 .date2-details[open] summary::after{content:'▲'}
 .date2-body{margin-top:6px}
-.datecardtitle{font-size:14px;font-weight:750;margin-bottom:6px}.optional-label{font-size:10px;font-weight:500;color:var(--muted);margin-left:4px}
+.datecardtitle{font-size:14px;font-weight:750;margin-bottom:6px}
 .result{
   background:#fff;border:1px solid var(--line);border-radius:15px;padding:10px
 }
@@ -133,22 +135,17 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
 .total{margin-top:7px;padding-top:7px;border-top:1px solid var(--line)}
 .totallabel{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
 .totalvalue{font-size:22px;font-weight:800;margin-top:2px}
-.compare-highlight{
-  margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);
-  text-align:right
-}
-.compare-highlight .label2{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.compare-highlight .value2{font-size:28px;font-weight:850;line-height:1.05;margin-top:3px}
-.footer{text-align:center;color:var(--muted);font-size:10px;padding:8px 8px 2px}.error{
+.footer{text-align:center;color:var(--muted);font-size:10px;padding:8px 8px 2px}
+.error{
   display:none;color:var(--danger);background:#fffbfa;border:1px solid #fecdca;
   border-radius:12px;padding:10px 11px;margin-bottom:12px;font-size:12px
 }
 .hidden{display:none!important}
 
-.result-grid{grid-template-columns:1fr 1fr;gap:7px}.result-grid.single #resultCard1{grid-column:1/-1}
+.result-grid{grid-template-columns:1fr 1fr;gap:7px}
+.result-grid.single #resultCard1{grid-column:1/-1}
 @media(min-width:700px){
   .page{padding:24px 18px 44px}
-  .desktop-two{grid-template-columns:1fr 1fr}
   .card,.result{padding:18px}
   .title{font-size:30px}
   .adminbase span{font-size:12px}
@@ -601,21 +598,20 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
       ? ((rem*(rem+1))/(N*(N+1)))*interest
       : 0;
     const earlySettlementCharge=rule78Rebate*0.20;
-    const netRebate=Math.max(0,rule78Rebate-earlySettlementCharge);
-
     // Processing fee basis retains the user's selected setting.
-    const balanceAfterRebateDeductible=Math.max(
+    const settlementBalanceBeforeFees=Math.max(
       0,
       outstandingBalance-rule78Rebate+earlySettlementCharge
     );
-    const adminBaseValue=
-      document.querySelector('input[name="adminBase"]:checked').value==='outstanding'
-      ? balanceAfterRebateDeductible
-      : loan;
 
-    const processingFee=adminBaseValue*(adminRate()/100);
+    const feeBasis=
+      document.querySelector('input[name="adminBase"]:checked').value==='outstanding'
+        ? settlementBalanceBeforeFees
+        : loan;
+
+    const processingFee=feeBasis*(adminRate()/100);
     const gst=processingFee*0.09;
-    const total=Math.max(0,outstandingBalance-rule78Rebate+earlySettlementCharge+processingFee+gst);
+    const total=Math.max(0,settlementBalanceBeforeFees+processingFee+gst);
 
     return {
       date:set,
@@ -623,7 +619,6 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
       rem,
       interest,
       totalPayable,
-      monthly,
       instalmentPaid,
       outstandingBalance,
       rebate:rule78Rebate,
@@ -695,7 +690,7 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
 
     const hasDate2Result=!!(b&&!b.error);
     $('resultCard2').classList.toggle('hidden',!hasDate2Result);
-    document.querySelector('.result-grid').classList.toggle('single',!hasDate2Result);
+    resultGrid.classList.toggle('single',!hasDate2Result);
 
     const er=a?.error||b?.error;
     $('error').style.display=er?'block':'none';
@@ -770,6 +765,7 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
   const advancedToggle=$('advancedToggle');
   const advancedToggleRow=$('advancedToggleRow');
   const advancedPanel=$('advancedPanel');
+  const resultGrid=document.querySelector('.result-grid');
 
   function toggleAdvanced(){
     const open=advancedPanel.classList.toggle('open');
@@ -820,8 +816,10 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
     $('s1Year').value=CY;
     $('s2Year').value=CY;
 
-    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    restoringState=true;
     update();
+    restoringState=false;
+    try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
     window.scrollTo({top:0,behavior:'smooth'});
   });
 
@@ -872,9 +870,9 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
     ctx.fill();
 
     // App icon
-    const icon=await loadCanvasImage('./full-settlement-logo.png');
+    const icon=await loadCanvasImage('./share-logo.png');
     if(icon){
-      ctx.drawImage(icon,45,42,110,110);
+      ctx.drawImage(icon,48,45,104,104);
     }
 
     // vertical divider
@@ -973,7 +971,7 @@ button,input,select{font:inherit;-webkit-tap-highlight-color:transparent}
     ctx.fillStyle=MUTED;
     ctx.font='400 21px Arial';
     ctx.textAlign='center';
-    ctx.fillText('Bernice Chua · @bernice.mercedes',540,hasDate2?1015:800);
+    ctx.fillText('Bernice Chua | @bernice.mercedes',540,hasDate2?1015:800);
 
     ctx.textAlign='left';
     return c;
